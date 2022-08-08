@@ -1,6 +1,5 @@
-/* See LICENSE file for copyright and license details. */
+#include <X11/XF86keysym.h>
 
-/* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
@@ -55,13 +54,19 @@ static const Layout layouts[] = {
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
-/* helper for spawning shell commands in the pre dwm-5.0 fashion */
-#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
+static const char *browsercmd[]  = { "chromium", NULL };
+
+static const char *volume_toggle[]  = { "amixer", "set", "Master", "toggle", NULL };
+static const char *volume_down[]  = { "amixer", "set", "Master", "5%-", NULL };
+static const char *volume_up[]  = { "amixer", "set", "Master", "5%+", NULL };
+static const char *mic_toggle[]  = { "amixer", "set", "Capture", "toggle", NULL };
+static const char *brightness_down[]  = { "brightnessctl", "s", "5%-", NULL };
+static const char *brightness_up[]  = { "brightnessctl", "s", "5%+", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -98,6 +103,15 @@ static Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_b,      spawn,          {.v = browsercmd } },
+	
+	// Media keys
+	{ 0,		XF86XK_AudioMute,         spawn,     {.v = volume_toggle} },
+	{ 0,		XF86XK_AudioLowerVolume,  spawn,     {.v = volume_down} },
+	{ 0,		XF86XK_AudioRaiseVolume,  spawn,     {.v = volume_up} },
+	{ 0,		XF86XK_AudioMicMute,      spawn,     {.v = mic_toggle} },
+	{ 0,		XF86XK_MonBrightnessDown, spawn,     {.v = brightness_down} },
+	{ 0,		XF86XK_MonBrightnessUp,   spawn,     {.v = brightness_up} },
 };
 
 /* button definitions */
